@@ -1,4 +1,5 @@
 from operator import mod
+from posixpath import split
 from Bucket import Bucket
 
 class HashLinear:
@@ -28,9 +29,37 @@ class HashLinear:
             self.buckets[pos].records.append(record) 
         
         #if pos == self.next:
+            #verificar se é necessário essa condição
     
         elif pos < self.next:
-            pos = pos = self.h_level(key, self.level + 1)
+            pos  = self.h_level(key, self.level + 1)
+        
+        elif(pos >= self.next and len(self.buckets[pos].records) == self.bucket_size):
+            print("Encheu o bucket")
+            print("proximo: ",self.next)
+            self.next += 1
+            print("posicao: ",self.next)
+            print("proximo: ",self.next)
+            self.buckets.append(Bucket(self.bucket_size))
+            #implementar a divisão de buckets
+            self.split_bucket(pos, len(self.buckets), record)
+
+
+    def split_bucket(self, posatual, novaposicao,record): #Mando a posição do bucket que encheu e onde vai ser criado o novo
+        for i in range(self.bucket_size):
+            print("i: ",i)
+            print("key: ",self.buckets[posatual].records[i])
+            print("mod: ", self.h_level(self.buckets[posatual].records[i],self.level+1))
+            pos = self.h_level(self.buckets[posatual].records[i],self.level+1)
+            
+            self.buckets[pos].records.append(self.buckets[posatual].records[i]) 
+
+            if(self.h_level(self.buckets[posatual].records[i],self.level+1) != posatual):
+                #criar um vetor para receber as posições dos que serão incluidos no ultimo bucket, para remover do que estavam 
+                print(i)
+            print("ok")
+        #self.buckets[novaposicao].append(record) 
+        
 
     def print_hash(self):
         for i in range(len(self.buckets)):

@@ -13,7 +13,6 @@ def main():
     hash.insert(6,6)
     hash.insert(5,5)
     hash.insert(10,10)
-    hash.insert(12,12)
     hash.insert(17,17)
     hash.insert(27,27)
     hash.print_hash()
