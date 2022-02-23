@@ -23,11 +23,16 @@ class HashLinear:
 
     def insert(self, key, record):
         pos = self.h_level(key, self.level)
-        if pos > self.next:
+        if (pos >= self.next and len(self.buckets[pos].records) < self.bucket_size):
             #verificar se não está cheio e não possui key igual no bucket
-            self.buckets[pos].append(record) 
+            self.buckets[pos].records.append(record) 
         
         #if pos == self.next:
     
-        #elif pos < self.next:
+        elif pos < self.next:
             pos = pos = self.h_level(key, self.level + 1)
+
+    def print_hash(self):
+        for i in range(len(self.buckets)):
+            if(not self.buckets[i].is_empty()):
+                print(self.buckets[i].records)
