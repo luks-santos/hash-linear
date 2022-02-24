@@ -3,6 +3,7 @@
 class Bucket:#classe dos buckets
     def __init__(self, bucket_size):
         self.bucket_size = bucket_size
+        self.overflow = False
         self.records = []#valores
 
     def is_empty(self) -> bool:

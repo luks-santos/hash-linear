@@ -24,43 +24,50 @@ class HashLinear:
 
     def insert(self, key, record):
         pos = self.h_level(key, self.level)
+       
         if (pos >= self.next and len(self.buckets[pos].records) < self.bucket_size):
-            #verificar se não está cheio e não possui key igual no bucket
+            if key in self.buckets[pos].records:
+                print('Chave já existe!')
+                return
             self.buckets[pos].records.append(record) 
-        
-        #if pos == self.next:
-            #verificar se é necessário essa condição
-    
-        elif pos < self.next:
-            pos  = self.h_level(key, self.level + 1)
-        
-        elif(pos >= self.next and len(self.buckets[pos].records) == self.bucket_size):
-            print("Encheu o bucket")
-            print("proximo: ",self.next)
-            self.next += 1
-            print("posicao: ",self.next)
-            print("proximo: ",self.next)
-            self.buckets.append(Bucket(self.bucket_size))
-            #implementar a divisão de buckets
-            self.split_bucket(pos, record)
-
-
-    def split_bucket(self, posatual,record): #Mando a posição do bucket que encheu e o record
-        for i in range(self.bucket_size):
-            print("i: ",i)
-            print("key: ",self.buckets[posatual].records[i])
-            print("mod: ", self.h_level(self.buckets[posatual].records[i],self.level+1))
-            pos = self.h_level(self.buckets[posatual].records[i],self.level+1)
+           
+        elif(pos > self.next and len(self.buckets[pos].records) == self.bucket_size):
+            if not key in self.buckets[pos].records:
+                self.buckets[pos].records.append(record)
+                self.buckets[pos].overflow = True
             
-            self.buckets[pos].records.append(self.buckets[posatual].records[i]) 
+            self.buckets.append(Bucket(self.bucket_size))
+            self.split_bucket(self.next)
+            self.next += 1
 
-            if(self.h_level(self.buckets[posatual].records[i],self.level+1) != posatual):
-                #criar um vetor para receber as posições dos que serão incluidos no ultimo bucket, para remover do que estavam 
-                print(i)
-            print("ok")
-        #self.buckets[novaposicao].append(record) 
+            if self.next == self.current_buckets() - 1:
+                self.level += 1
+
+        elif pos == self.next and len(self.buckets[pos].records) == self.bucket_size:
+            self.buckets.append(Bucket(self.bucket_size))
+            self.split_bucket(self.next)
+            pos = self.h_level(key, self.level + 1)
+            self.buckets[pos].records.append(record)
+            self.next += 1
+
+            if self.next == self.current_buckets() - 1:
+                self.level += 1
+            #tem caso que pode ter overflow mesmo dividindo
+
+        elif pos < self.next:
+           pos = self.h_level(key, self.level + 1)
+           
+
+    def split_bucket(self, posatual): #Mando a posição do bucket que encheu e o record
+        i = 0
+        while i < len(self.buckets[posatual].records):
+            k = self.buckets[posatual].records[i]
+            pos = self.h_level(k, self.level + 1) #mudar o k para k[0]
+            if pos != posatual:
+                self.buckets[pos].records.append(self.buckets[posatual].records.pop(i)) 
+            else:
+                i += 1
         
-
     def print_hash(self):
         for i in range(len(self.buckets)):
             if(not self.buckets[i].is_empty()):
