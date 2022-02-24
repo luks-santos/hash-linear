@@ -42,10 +42,10 @@ class HashLinear:
             print("proximo: ",self.next)
             self.buckets.append(Bucket(self.bucket_size))
             #implementar a divisão de buckets
-            self.split_bucket(pos, len(self.buckets), record)
+            self.split_bucket(pos, record)
 
 
-    def split_bucket(self, posatual, novaposicao,record): #Mando a posição do bucket que encheu e onde vai ser criado o novo
+    def split_bucket(self, posatual,record): #Mando a posição do bucket que encheu e o record
         for i in range(self.bucket_size):
             print("i: ",i)
             print("key: ",self.buckets[posatual].records[i])
