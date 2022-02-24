@@ -22,9 +22,13 @@ def main():
     hash.insert(37,37) 
     hash.insert(29,29) 
     hash.insert(22,22)
+    hash.insert(66,66)
+    hash.insert(34,34)
+    hash.insert(50,50)
     hash.print_hash()
+    print('Level hash:', hash.level)
 
-
+    
 
 if __name__ == '__main__':
     main()

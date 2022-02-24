@@ -40,7 +40,7 @@ class HashLinear:
             self.split_bucket(self.next)
             self.next += 1
 
-            if self.next == self.current_buckets() - 1:
+            if self.next == self.current_buckets():
                 self.level += 1
 
         elif pos == self.next and len(self.buckets[pos].records) == self.bucket_size:
@@ -50,12 +50,30 @@ class HashLinear:
             self.buckets[pos].records.append(record)
             self.next += 1
 
-            if self.next == self.current_buckets() - 1:
+            if self.next == self.current_buckets():
                 self.level += 1
             #tem caso que pode ter overflow mesmo dividindo
 
         elif pos < self.next:
-           pos = self.h_level(key, self.level + 1)
+            pos = self.h_level(key, self.level + 1)
+            if len(self.buckets[pos].records) < self.bucket_size:
+                if key in self.buckets[pos].records:
+                    print('Chave já existe!')
+                    return
+                self.buckets[pos].records.append(record) 
+            
+            elif len(self.buckets[pos].records) == self.bucket_size:
+                if not key in self.buckets[pos].records:
+                    self.buckets[pos].records.append(record)
+                    self.buckets[pos].overflow = True
+            
+                self.buckets.append(Bucket(self.bucket_size))
+                self.split_bucket(self.next)
+                self.next += 1
+
+                if self.next == self.current_buckets():
+                    self.level += 1
+                
            
 
     def split_bucket(self, posatual): #Mando a posição do bucket que encheu e o record
@@ -67,8 +85,12 @@ class HashLinear:
                 self.buckets[pos].records.append(self.buckets[posatual].records.pop(i)) 
             else:
                 i += 1
+            if len(self.buckets[posatual].records) <= self.bucket_size:
+                self.buckets[posatual].overflow = False
+
         
     def print_hash(self):
         for i in range(len(self.buckets)):
             if(not self.buckets[i].is_empty()):
                 print(self.buckets[i].records)
+                #print('bucket overflow', self.buckets[i].overflow)
