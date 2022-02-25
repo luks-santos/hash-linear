@@ -1,5 +1,6 @@
 from operator import mod
 from posixpath import split
+from re import search
 from Bucket import Bucket
 
 class HashLinear:
@@ -92,3 +93,29 @@ class HashLinear:
           #  if(not self.buckets[i].is_empty()):
                 print(self.buckets[i].records)
                 #print('bucket overflow', self.buckets[i].overflow)
+
+    def search(self,key):
+        pos = self.h_level(key,self.level)
+        
+        if(pos<self.next):
+            pos = self.h_level(key,self.level +1)
+        
+        for i,k in enumerate(self.buckets[pos].records):
+            if(k == key): #arrumar k para k[0]
+                print("Bucket da key: ", self.buckets[pos].records)
+                print("key buscada: ", key)
+                return i, self.buckets[pos]
+        print("key não encontrada")
+        return None,None
+    
+    def delete(self,key):
+        i,bucket = self.search(key)
+        if(bucket):
+            print("Overflow antes: ", bucket.overflow)
+            bucket.records.pop(i)
+            if(len(bucket.records)<=self.bucket_size):
+                bucket.overflow = False
+            print("Overflow: ", bucket.overflow)
+    
+   
+    

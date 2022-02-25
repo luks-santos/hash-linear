@@ -34,6 +34,12 @@ def main():
     hash.insert(879,879)
     hash.insert(434,434)
 
+    hash.search(443)
+    hash.search(200)
+
+    hash.delete(443)
+    hash.delete(434)
+    hash.delete(32)
     hash.print_hash()
     print('next', hash.next)
     print('Level hash:', hash.level)
