@@ -2,7 +2,6 @@ from HashLinear import HashLinear
 
 def main():
     hash = HashLinear(4, 4)
-    print(hash.h_level(31, 0))
 
     hash.insert(32, 32)
     hash.insert(44,44)
@@ -25,7 +24,18 @@ def main():
     hash.insert(66,66)
     hash.insert(34,34)
     hash.insert(50,50)
+    hash.insert(27,27)
+    hash.insert(33,33)
+    hash.insert(17,17)
+
+    hash.insert(225,225)
+    hash.insert(227,227)
+    hash.insert(443,443)
+    hash.insert(879,879)
+    hash.insert(434,434)
+
     hash.print_hash()
+    print('next', hash.next)
     print('Level hash:', hash.level)
 
     

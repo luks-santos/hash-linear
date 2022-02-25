@@ -10,4 +10,4 @@ class Bucket:#classe dos buckets
         return len(self.records) == 0
     
     def is_full(self) -> bool:
-        return len(self.records) == self.bucket_size 
+        return len(self.records) >= self.bucket_size 

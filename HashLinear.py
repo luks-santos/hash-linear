@@ -24,35 +24,33 @@ class HashLinear:
 
     def insert(self, key, record):
         pos = self.h_level(key, self.level)
-       
-        if (pos >= self.next and len(self.buckets[pos].records) < self.bucket_size):
-            if key in self.buckets[pos].records:
-                print('Chave já existe!')
-                return
-            self.buckets[pos].records.append(record) 
+      
+        if (pos >= self.next):
+            if len(self.buckets[pos].records) < (self.bucket_size):
+                if key in self.buckets[pos].records:
+                    print('Chave já existe!')
+                    return
+                self.buckets[pos].records.append(record) 
            
-        elif(pos > self.next and len(self.buckets[pos].records) == self.bucket_size):
-            if not key in self.buckets[pos].records:
-                self.buckets[pos].records.append(record)
-                self.buckets[pos].overflow = True
+            elif(pos > self.next and self.buckets[pos].is_full()):
+                if not key in self.buckets[pos].records:
+                    self.buckets[pos].records.append(record)
+                    self.buckets[pos].overflow = True
             
-            self.buckets.append(Bucket(self.bucket_size))
-            self.split_bucket(self.next)
-            self.next += 1
+                self.buckets.append(Bucket(self.bucket_size))
+                self.split_bucket(self.next)
+                self.next += 1
+
+            elif pos == self.next and self.buckets[pos].is_full():
+                self.buckets.append(Bucket(self.bucket_size))
+                self.split_bucket(self.next)
+                pos = self.h_level(key, self.level + 1)
+                self.buckets[pos].records.append(record)
+                self.next += 1
 
             if self.next == self.current_buckets():
                 self.level += 1
-
-        elif pos == self.next and len(self.buckets[pos].records) == self.bucket_size:
-            self.buckets.append(Bucket(self.bucket_size))
-            self.split_bucket(self.next)
-            pos = self.h_level(key, self.level + 1)
-            self.buckets[pos].records.append(record)
-            self.next += 1
-
-            if self.next == self.current_buckets():
-                self.level += 1
-            #tem caso que pode ter overflow mesmo dividindo
+                self.next = 0
 
         elif pos < self.next:
             pos = self.h_level(key, self.level + 1)
@@ -73,9 +71,9 @@ class HashLinear:
 
                 if self.next == self.current_buckets():
                     self.level += 1
+                    self.next = 0
                 
            
-
     def split_bucket(self, posatual): #Mando a posição do bucket que encheu e o record
         i = 0
         while i < len(self.buckets[posatual].records):
@@ -91,6 +89,6 @@ class HashLinear:
         
     def print_hash(self):
         for i in range(len(self.buckets)):
-            if(not self.buckets[i].is_empty()):
+          #  if(not self.buckets[i].is_empty()):
                 print(self.buckets[i].records)
                 #print('bucket overflow', self.buckets[i].overflow)
