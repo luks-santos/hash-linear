@@ -11,3 +11,6 @@ class Bucket:#classe dos buckets
     
     def is_full(self) -> bool:
         return len(self.records) >= self.bucket_size 
+    
+    def not_overflow(self) -> bool:
+        return len(self.records) <= self.bucket_size

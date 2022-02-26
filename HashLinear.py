@@ -1,6 +1,3 @@
-from operator import mod
-from posixpath import split
-from re import search
 from Bucket import Bucket
 
 class HashLinear:
@@ -23,99 +20,77 @@ class HashLinear:
         elif level == self.level + 1:
             return key % (2 * self.current_buckets())
 
+    def new_round(self):
+        if self.next == self.current_buckets():
+            self.level += 1
+            self.next = 0
+
     def insert(self, key, record):
         pos = self.h_level(key, self.level)
-      
-        if (pos >= self.next):
-            if len(self.buckets[pos].records) < (self.bucket_size):
-                if key in self.buckets[pos].records:
-                    print('Chave já existe!')
-                    return
-                self.buckets[pos].records.append(record) 
-           
-            elif(pos > self.next and self.buckets[pos].is_full()):
-                if not key in self.buckets[pos].records:
-                    self.buckets[pos].records.append(record)
-                    self.buckets[pos].overflow = True
-            
-                self.buckets.append(Bucket(self.bucket_size))
-                self.split_bucket(self.next)
-                self.next += 1
 
-            elif pos == self.next and self.buckets[pos].is_full():
-                self.buckets.append(Bucket(self.bucket_size))
-                self.split_bucket(self.next)
-                pos = self.h_level(key, self.level + 1)
-                self.buckets[pos].records.append(record)
-                self.next += 1
-
-            if self.next == self.current_buckets():
-                self.level += 1
-                self.next = 0
+        if pos == self.next and self.buckets[pos].is_full():
+            self.buckets.append(Bucket(self.bucket_size))
+            self.split_bucket(self.next)
+            pos = self.h_level(key, self.level + 1)
+            self.buckets[pos].records.append(record)
+            self.next += 1
+            self.new_round()
+            return
 
         elif pos < self.next:
             pos = self.h_level(key, self.level + 1)
-            if len(self.buckets[pos].records) < self.bucket_size:
-                if key in self.buckets[pos].records:
-                    print('Chave já existe!')
-                    return
-                self.buckets[pos].records.append(record) 
-            
-            elif len(self.buckets[pos].records) == self.bucket_size:
-                if not key in self.buckets[pos].records:
-                    self.buckets[pos].records.append(record)
-                    self.buckets[pos].overflow = True
-            
+
+        if not self.buckets[pos].is_full():
+            if key in self.buckets[pos].records:
+                return
+            self.buckets[pos].records.append(record) 
+
+        elif self.buckets[pos].is_full():
+            if not key in self.buckets[pos].records:
+                self.buckets[pos].records.append(record)
+                self.buckets[pos].overflow = True
                 self.buckets.append(Bucket(self.bucket_size))
                 self.split_bucket(self.next)
                 self.next += 1
-
-                if self.next == self.current_buckets():
-                    self.level += 1
-                    self.next = 0
+                self.new_round()
                 
-           
-    def split_bucket(self, posatual): #Mando a posição do bucket que encheu e o record
+    def split_bucket(self, current_pos): #Mando a posição do bucket que encheu e o record
         i = 0
-        while i < len(self.buckets[posatual].records):
-            k = self.buckets[posatual].records[i]
-            pos = self.h_level(k, self.level + 1) #mudar o k para k[0]
-            if pos != posatual:
-                self.buckets[pos].records.append(self.buckets[posatual].records.pop(i)) 
+        while i < len(self.buckets[current_pos].records):
+            record = self.buckets[current_pos].records[i]
+            pos = self.h_level(record, self.level + 1) #mudar o k para k[0]
+            if pos != current_pos:
+                self.buckets[pos].records.append(self.buckets[current_pos].records.pop(i)) 
             else:
                 i += 1
-            if len(self.buckets[posatual].records) <= self.bucket_size:
-                self.buckets[posatual].overflow = False
 
-        
+        if self.buckets[current_pos].not_overflow():
+            self.buckets[current_pos].overflow = False
+
     def print_hash(self):
         for i in range(len(self.buckets)):
-          #  if(not self.buckets[i].is_empty()):
+            if self.buckets[i].overflow:
+                print(self.buckets[i].records, end=' -> overflow\n')
+            else:
                 print(self.buckets[i].records)
-                #print('bucket overflow', self.buckets[i].overflow)
 
-    def search(self,key):
-        pos = self.h_level(key,self.level)
+    def search(self, key):
+        pos = self.h_level(key, self.level)
         
-        if(pos<self.next):
-            pos = self.h_level(key,self.level +1)
+        if pos < self.next:
+            pos = self.h_level(key, self.level + 1)
         
-        for i,k in enumerate(self.buckets[pos].records):
-            if(k == key): #arrumar k para k[0]
-                print("Bucket da key: ", self.buckets[pos].records)
-                print("key buscada: ", key)
+        for i, record in enumerate(self.buckets[pos].records):
+            if key == record: #arrumar k para k[0]
                 return i, self.buckets[pos]
+
         print("key não encontrada")
         return None,None
     
-    def delete(self,key):
-        i,bucket = self.search(key)
-        if(bucket):
-            print("Overflow antes: ", bucket.overflow)
+    def delete(self, key):
+        i, bucket = self.search(key)
+        if bucket:
             bucket.records.pop(i)
-            if(len(bucket.records)<=self.bucket_size):
+            if bucket.not_overflow():
                 bucket.overflow = False
-            print("Overflow: ", bucket.overflow)
-    
-   
-    
+           
