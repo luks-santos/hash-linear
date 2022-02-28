@@ -1,42 +1,43 @@
 from HashLinear import HashLinear
+from time import time
 
 def main():
-    hash = HashLinear(4, 4)
+    n = int(input('Digite a quantidade de buckets inicial n0: '))
+    len_page = int(input('Digite o tamanho da página em bytes: '))
+    qty_fields = int(input('Digite a quantidade de campos do registro: '))
+    hash = HashLinear(n, len_page, qty_fields)
+ 
+    while(True):     
+        print('\n1. Inserir registro')
+        print('2. Remover registro')
+        print('3. Buscar registro por igualdade')
+        print('4. Mostrar Hash')
+        print('5. Executar casos de teste')
+        print('0. Sair')
+        n = int(input('Digite uma opção: '))
+        
+        if n == 1:
+            record = [int(x) for x in input('Informe o registro completo com todos os campos:').split(',')]
+            if len(record) == qty_fields:
+                hash.insert(record[0], record)
+            else:
+              print('Tamanho de campos no registro não corresponde com o informado.')
 
-    hash.insert(32, 32)
-    hash.insert(44,44)
-    hash.insert(36,36)
-    hash.insert(9,9)
-    hash.insert(25,25)
-    hash.insert(5,5)
-    hash.insert(14,14)
-    hash.insert(18,18)
-    hash.insert(10,10)
-    hash.insert(30,30)
-    hash.insert(31,31) 
-    hash.insert(35,35) 
-    hash.insert(7, 7) 
-    hash.insert(11,11) 
-    hash.insert(43,43) 
-    hash.insert(37,37) 
-    hash.insert(29,29) 
-    hash.insert(22,22)
-    hash.insert(66,66)
-    hash.insert(34,34)
-    hash.insert(50,50)
-    hash.insert(27,27)
-    hash.insert(33,33)
-    hash.insert(17,17)
+        elif n == 2:
+           key = int(input('Digite a chave do registro para ser removido: '))
+           hash.delete(key)
 
-    hash.insert(225,225)
-    hash.insert(227,227)
-    hash.insert(443,443)
-    hash.insert(879,879)
-    hash.insert(434,434)
+        elif n == 3:
+            key = int(input('Digite a chave para ser buscado o registro: '))
+            i, rec = hash.search(key)
+            if rec:
+                print(rec[i])
 
-    hash.print_hash()
+        elif n == 4:
+            hash.print_hash()
 
-
+        else:
+            break
 
 if __name__ == '__main__':
     main()

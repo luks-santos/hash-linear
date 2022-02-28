@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
-class Bucket:#classe dos buckets
+class Bucket: #classe dos buckets
     def __init__(self, bucket_size):
         self.bucket_size = bucket_size
         self.overflow = False
-        self.records = []#valores
+        self.records = []
 
     def is_empty(self) -> bool:
         return len(self.records) == 0
