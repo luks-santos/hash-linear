@@ -1,5 +1,5 @@
 from HashLinear import HashLinear
-from time import time
+import time
 
 def main():
     n = int(input('Digite a quantidade de buckets inicial n0: '))
@@ -36,6 +36,20 @@ def main():
         elif n == 4:
             hash.print_hash()
 
+        elif n == 5:
+            file = open('10000dpadraodetestes.csv', 'r')
+            start = time.time()
+            for row in file:
+                record = row.split(',')
+                if(record[0] == '+'):
+                    record = [int(x) for x in record[1:]]
+                    hash.insert(record[0], record)
+                elif(record[0] == '-'):
+                    record = [int(x) for x in record[1:]]
+                    hash.delete(record[0])
+                end = time.time()
+            file.close()
+            print(end - start)
         else:
             break
 
