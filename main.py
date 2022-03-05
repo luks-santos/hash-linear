@@ -1,5 +1,5 @@
 from HashLinear import HashLinear
-import time
+from time import time
 
 def main():
     n = int(input('Digite a quantidade de buckets inicial n0: '))
@@ -22,7 +22,7 @@ def main():
                 hash.insert(record[0], record)
             else:
               print('Tamanho de campos no registro não corresponde com o informado.')
-
+            
         elif n == 2:
            key = int(input('Digite a chave do registro para ser removido: '))
            hash.delete(key)
@@ -37,8 +37,8 @@ def main():
             hash.print_hash()
 
         elif n == 5:
-            file = open('10000dpadraodetestes.csv', 'r')
-            start = time.time()
+            file = open('test_files/a5i10000d1000.csv', 'r')
+            start = time()
             for row in file:
                 record = row.split(',')
                 if(record[0] == '+'):
@@ -47,7 +47,7 @@ def main():
                 elif(record[0] == '-'):
                     record = [int(x) for x in record[1:]]
                     hash.delete(record[0])
-                end = time.time()
+                end = time()
             file.close()
             print(end - start)
         else:
