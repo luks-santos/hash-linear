@@ -102,5 +102,3 @@ class HashLinear:
             else:
                 print(self.buckets[i].records)
             
-            if i == 100:
-                break
