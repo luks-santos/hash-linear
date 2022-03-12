@@ -37,7 +37,7 @@ def main():
             hash.print_hash()
 
         elif n == 5:
-            file = open('test_files/a5i10000d1000.csv', 'r')
+            file = open('test_files/a5i10000d10000.csv', 'r')
             start = time()
             for row in file:
                 record = row.split(',')

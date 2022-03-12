@@ -6,8 +6,8 @@
 
 Para utilização do código implementado há duas possiveis maneiras.
 
-- 1º [Inserção](###inserção), [deleção](###deleção) e [busca por igualdade](###busca)
-- 2º [Caso de testes automatizado](###caso de testes automatizado)
+- 1º [Inserção](###Inserção), [deleção](###Deleção) e [busca por igualdade](###Busca)
+- 2º [Caso de testes automatizado](###Caso de testes automatizado)
 
 # Como usar
 
