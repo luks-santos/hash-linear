@@ -33,12 +33,20 @@ class HashLinear:
 
     def insert(self, key, record):
         pos = self.h_level(key, self.level) #calcula a posição que o registro pode ser inserido
+        
         if pos == self.next and self.buckets[pos].is_full(): # verifica se o local que o cuket será inserido, sofrerá divisão
-   
             self.buckets.append(Bucket(self.bucket_size)) #cria novo bucket
             self.split_bucket(self.buckets[self.next], self.next, 0) #faz o split no bucket apontado por próximo
-            #pos = self.h_level(key, self.level + 1)
-            self.insert(key, record)
+           
+            pos = self.h_level(key, self.level + 1)
+            if not self.buckets[pos].is_full():
+                self.buckets[pos].records.append(record)
+
+            else: 
+                self.insert_overflow(pos, record)
+           
+            self.next += 1
+            self.new_round()
             return
 
         elif pos < self.next: #verifica se bucket a receber a chave ja sofreu split
@@ -48,30 +56,34 @@ class HashLinear:
             self.buckets[pos].records.append(record) #caso contrario apenas insere
 
         elif self.buckets[pos].is_full(): #verifica se bucket se encontra cheio
-            print('NEXT: ', self.next)
-            if not len(self.buckets[pos].overflow):
-                over = Bucket(self.bucket_size)
-                over.records.append(record)
-                self.buckets[pos].overflow.append(over)
-
-            else:
-                flag = False
-                for i, b in enumerate(self.buckets[pos].overflow):
-                    if not b.is_full(): 
-                        b.records.append(record)
-                        flag = True
-                        break
-                    
-                if not flag:
-                    over = Bucket(self.bucket_size)
-                    over.records.append(record)
-                    self.buckets[pos].overflow.append(over)
+            self.insert_overflow(pos, record)
             
             self.buckets.append(Bucket(self.bucket_size)) #insere novo bucket
             self.split_bucket(self.buckets[self.next], self.next, 0) #faz split com o bucket apontado por next
             self.next += 1 #atualiza next
             self.new_round() #verifica se next ultrapassou bucket do h(level)
-                
+            return 
+            
+    def insert_overflow(self, pos, record):
+        if not self.buckets[pos].get_overflow():
+                over = Bucket(self.bucket_size)
+                over.records.append(record)
+                self.buckets[pos].overflow.append(over)
+                self.buckets[pos].set_overflow(True)
+        else:
+            flag = False
+            for bucket_overflow in self.buckets[pos].overflow:
+                if not bucket_overflow.is_full(): 
+                    bucket_overflow.records.append(record)
+                    flag = True
+                    break
+                    
+                if not flag:
+                    over = Bucket(self.bucket_size)
+                    over.records.append(record)
+                    self.buckets[pos].overflow.append(over)
+                    self.buckets[pos].set_overflow(True)
+
     def split_bucket(self, bucket, current_pos, k): #Mando a posição do bucket que encheu e o record
         i = 0
         while i < len(bucket.records): #pecorre todos registros do vetor
@@ -82,7 +94,7 @@ class HashLinear:
                 #obs não é encessario atualizar o i quando se deleta pois ja decrementa uma posição 
             else:
                 i += 1 #caso contrário apenas atualiza o i
-        if len(bucket.overflow):
+        if bucket.is_overflow:
             return self.split_bucket(bucket.overflow[k], current_pos, k+1)
 
     def search(self, key): #busca um registro pela chave
@@ -107,13 +119,13 @@ class HashLinear:
         if bucket: #se encontrou o registro deleta
             bucket.records.pop(i)
           
-    
     def print_hash(self): 
         for i in range(len(self.buckets)):
+            #if not self.buckets[i].is_empty():
             if len(self.buckets[i].overflow):
                 print(i ,' - ',self.buckets[i].records, end=' -> ')
                 for b in self.buckets[i].overflow:
-                     print(b.records, end=' -> ')
+                    print(b.records, end=' -> ')
 
                 print()
             else:
