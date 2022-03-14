@@ -14,7 +14,6 @@ class HashLinear:
 
     def __bucket_size(self, len_page, qty_fields): # retorna a tamanho de registros do bucket de acordo com tamanho da página
         vet_ = [maxsize] * qty_fields 
-        print(len_page//getsizeof(vet_))
         return len_page//getsizeof(vet_) 
 
     def current_buckets(self) -> int: #retorna a quantidade de buckets de acordo com nível da arvore e buckets iniciais

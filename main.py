@@ -1,3 +1,16 @@
+""" 
+/*********************************************************
+ * Trabalho da disciplina de Banco de Dados II           *
+ *                     Hash Linear                       *
+ *                                                       *
+ * Curso: Bacharelado em Engenharia da Computação        *
+ * Professor: Marcos Roberto Ribeiro                     *
+ *                                                       *
+ * Autores:                                              *
+ * Lucas Batista dos Santos - 0048505                    *                                                *
+ * Jorge Luís Vieira Murilo - 0027752                    *
+ ********************************************************/ 
+ """
 from HashLinear import HashLinear
 from time import time
 
@@ -37,7 +50,7 @@ def main():
             hash.print_hash()
 
         elif n == 5:
-            file = open('output.csv', 'r')
+            file = open('test_files/a5i1000d1000.csv', 'r')
             start = time()
             for row in file:
                 record = row.split(',')
